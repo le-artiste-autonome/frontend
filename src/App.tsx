@@ -113,7 +113,7 @@ function App() {
 
 const [image, setImage] = useState('');
 
-  const api_key = 'uvM4Ns4WuFp1LoAAzQg94Yhigtr8U4SyR1qtY6eFGpy0s4lsHUWHOgnDNCmY';
+  const api_key = '8laQcdKfZ8NURLkgkCcsTiDrEThXENe6nrf8pAiI8x8Fl6XEPmAOjlD9ufeY';
   useEffect(()=> {
     if (prompt != '') {
       console.log('img fires');
@@ -137,13 +137,13 @@ const [image, setImage] = useState('');
       // {'Content-Type': 'application/json'}
       )
       .then(function (response:any) {
-        console.log('success with prompt');
+        console.log('success with img');
         console.log(response);
         setImage(response.data.output[0]);
       })
       .catch(function (error:any) {
         // handle error:any
-        console.log('prompt error')
+        console.log('img error',error)
         console.log(error);
       })
       .finally(function () {
