@@ -153,20 +153,30 @@ const [image, setImage] = useState('');
   },[prompt])
 
   return (
-    <div>
-      <div>L'Artiste Autonomie</div>
-      <div style={{display: 'flex', flexDirection: 'row', border: '1px blue solid'}}>
-        <div onClick={()=>setSelected(CATEGORY.Busines)} className={selected == CATEGORY.Busines ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Busines}</div>
-        <div onClick={()=>setSelected(CATEGORY.Entertainment)} className={selected == CATEGORY.Entertainment ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Entertainment}</div>
-        <div onClick={()=>setSelected(CATEGORY.General)} className={selected == CATEGORY.General ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.General}</div>
-        <div onClick={()=>setSelected(CATEGORY.Health)} className={selected == CATEGORY.Health ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Health}</div>
-        <div onClick={()=>setSelected(CATEGORY.Science)} className={selected == CATEGORY.Science ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Science}</div>
-        <div onClick={()=>setSelected(CATEGORY.Sports)} className={selected == CATEGORY.Sports ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Sports}</div>
-        <div onClick={()=>setSelected(CATEGORY.Technology)} className={selected == CATEGORY.Technology ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Technology}</div>
+    <div className='main'>
+      <div className='title'>L'Artiste Autonomie</div>
+      <div className='contain'>
+      <div  className='buttons'>
+          <div onClick={()=>setSelected(CATEGORY.Busines)} className={selected == CATEGORY.Busines ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Busines}</div>
+          <div onClick={()=>setSelected(CATEGORY.Entertainment)} className={selected == CATEGORY.Entertainment ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Entertainment}</div>
+          <div onClick={()=>setSelected(CATEGORY.General)} className={selected == CATEGORY.General ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.General}</div>
+          <div onClick={()=>setSelected(CATEGORY.Health)} className={selected == CATEGORY.Health ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Health}</div>
+          <div onClick={()=>setSelected(CATEGORY.Science)} className={selected == CATEGORY.Science ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Science}</div>
+          <div onClick={()=>setSelected(CATEGORY.Sports)} className={selected == CATEGORY.Sports ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Sports}</div>
+          <div onClick={()=>setSelected(CATEGORY.Technology)} className={selected == CATEGORY.Technology ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Technology}</div>
+        </div>
+        <br/>
+        {/* <div className='textheader one'>Les Nouvelles</div> */}
+        <div className='one'>{resp}</div>
+        <br/>
+        <div className='imgc'>
+          <div className='inner1'>
+            <div className='textheader two'>Le Prompt</div>
+            <div>{prompt}</div>
+          </div>
+          <img src={image}></img>
+        </div>
       </div>
-      <div>{resp}</div>
-      <div>{prompt}</div>
-      <img src={image}></img>
       
     </div>
   );

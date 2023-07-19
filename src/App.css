@@ -3,7 +3,68 @@
 }
 
 .selected {
-  background-color: #61dafb;
+  border-bottom: 3px black solid;
+  font-style: italic;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  background-color: #E2E2E2;
+  color: black;
+  font-family:serif;
+  height: 100vh;
+}
+
+.contain {
+  margin-left: auto;
+  margin-right:auto;
+  max-width: 80vw;
+}
+
+.imgc {
+  display: flex;
+  flex-direction: row;
+}
+
+.inner1 {
+  max-width: 50%;
+}
+
+.textheader {
+  font-weight: 700;
+}
+
+.one{
+  font-size: 3rem;
+}
+
+.two {
+
+}
+
+.buttons {
+  font-weight: 700;
+  display: flex;
+  flex-direction: row;
+  border-top: 2px black solid;
+  border-bottom: 2px black solid;
+  padding: 3px;
+  margin-bottom: 12px;
+}
+
+.texts {
+
+}
+
+.title {
+  height: 70px;
+  font-family:serif;
+  margin: 10px;
+  margin-bottom: 20px;
+  font-size: 4rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .App-logo {
