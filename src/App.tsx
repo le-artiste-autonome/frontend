@@ -65,6 +65,7 @@ function App() {
   useEffect(()=>{
     let getCategories = async () => {
       const client = await CosmWasmClient.connect("https://rpc.uni.junonetwork.io:443");
+      // DAO: https://testnet.daodao.zone/dao/juno12atj46ek892d9nzz90pz555454ae5pmvl0mvxmhaae5vc4a5t32sxj4vsf/proposals
       let catsRes = await client.queryContractSmart("juno12atj46ek892d9nzz90pz555454ae5pmvl0mvxmhaae5vc4a5t32sxj4vsf", {"get_item": {"key": "categories"}});
       let cats = catsRes.item.split(',')
       console.log(cats)
