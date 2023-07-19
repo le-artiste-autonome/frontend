@@ -174,7 +174,7 @@ const [image, setImage] = useState('');
             <div className='textheader two'>Le Prompt</div>
             <div>{prompt}</div>
           </div>
-          <img src={image}></img>
+          <img className='img1' src={image}></img>
         </div>
       </div>
       
