@@ -4,6 +4,7 @@ import './App.css';
 import { useQuery, gql } from '@apollo/client';
 import { RESTDataSource } from '@apollo/datasource-rest';
 import axios from 'axios';
+import { CosmWasmClient } from 'cosmwasm';
 // const NewsAPI = require('newsapi');
 // const newsapi = new NewsAPI('33b102361a2c443d8a29104d145cdefa');
 
@@ -53,7 +54,8 @@ function App() {
   const [resp, setResp] = useState('loading...');
 
   const [news, setNews] = useState('');
-  
+  const [categories, setCategories] = useState([]);
+
   // get headline
   const url = 'https://coral-app-i986y.ondigitalocean.app/ask'
   // const data = {'new_prompt': todays_new}
@@ -61,7 +63,14 @@ function App() {
   const [selected, setSelected] = useState(CATEGORY.Busines);
 
   useEffect(()=>{
-
+    let getCategories = async () => {
+      const client = await CosmWasmClient.connect("https://rpc.uni.junonetwork.io:443");
+      let catsRes = await client.queryContractSmart("juno12atj46ek892d9nzz90pz555454ae5pmvl0mvxmhaae5vc4a5t32sxj4vsf", {"get_item": {"key": "categories"}});
+      let cats = catsRes.item.split(',')
+      console.log(cats)
+      setCategories(cats)
+    }
+    getCategories()
    
         // Make a request for a user with a given ID
         axios.post('https://coral-app-i986y.ondigitalocean.app/news', {'category':selected.toLocaleLowerCase()})
@@ -156,14 +165,10 @@ const [image, setImage] = useState('');
     <div className='main'>
       <div className='title'>L'Artiste Autonomie</div>
       <div className='contain'>
-      <div  className='buttons'>
-          <div onClick={()=>setSelected(CATEGORY.Busines)} className={selected == CATEGORY.Busines ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Busines}</div>
-          <div onClick={()=>setSelected(CATEGORY.Entertainment)} className={selected == CATEGORY.Entertainment ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Entertainment}</div>
-          <div onClick={()=>setSelected(CATEGORY.General)} className={selected == CATEGORY.General ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.General}</div>
-          <div onClick={()=>setSelected(CATEGORY.Health)} className={selected == CATEGORY.Health ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Health}</div>
-          <div onClick={()=>setSelected(CATEGORY.Science)} className={selected == CATEGORY.Science ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Science}</div>
-          <div onClick={()=>setSelected(CATEGORY.Sports)} className={selected == CATEGORY.Sports ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Sports}</div>
-          <div onClick={()=>setSelected(CATEGORY.Technology)} className={selected == CATEGORY.Technology ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Technology}</div>
+        <div  className='buttons'>
+          {categories.map((value, key) => {
+            return <div onClick={()=>setSelected(value)} className={selected == value ? 'selected' : ''} style={{margin: '3px'}}>{value}</div>
+          })}
         </div>
         <br/>
         {/* <div className='textheader one'>Les Nouvelles</div> */}
@@ -176,9 +181,9 @@ const [image, setImage] = useState('');
           </div>
           <img className='img1' src={image}></img>
         </div>
-      </div>
-      
-    </div>
+          </div>
+
+        </div>
   );
 }
 
