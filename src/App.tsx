@@ -7,6 +7,16 @@ import axios from 'axios';
 // const NewsAPI = require('newsapi');
 // const newsapi = new NewsAPI('33b102361a2c443d8a29104d145cdefa');
 
+const CATEGORY = {
+  Busines: 'Business',
+  Entertainment: 'Entertainment',
+  General: 'General',
+  Health: 'Health',
+  Science: 'Science',
+  Sports: 'Sports',
+  Technology: 'Technology'
+}
+
 const GET_LOCATIONS = gql`
   query GetLocations {
     locations {
@@ -48,11 +58,13 @@ function App() {
   const url = 'https://coral-app-i986y.ondigitalocean.app/ask'
   // const data = {'new_prompt': todays_new}
   // const headers = {'Content-Type': 'application/json'}
+  const [selected, setSelected] = useState(CATEGORY.Busines);
+
   useEffect(()=>{
 
-    if(resp == 'loading...') {
+   
         // Make a request for a user with a given ID
-        axios.get('https://coral-app-i986y.ondigitalocean.app/news', )
+        axios.post('https://coral-app-i986y.ondigitalocean.app/news', {'category':selected.toLocaleLowerCase()})
         .then(function (response:any) {
           // handle success
           console.log('success with headlines!')
@@ -66,11 +78,15 @@ function App() {
         .finally(function () {
           // always executed
         });
-    }
+    
       
-  },[resp])
+  },[resp, selected])
 
   const [prompt, setPrompt] = useState('');
+
+  useEffect(()=>{
+    console.log('fires')
+  },[])
 
   // get prompt
   useEffect(()=> {
@@ -97,7 +113,7 @@ function App() {
 
 const [image, setImage] = useState('');
 
-  const api_key = 'tgA2Ft4FN4T1oQeG8d4FG2hJB1m7qPQgKemCx3P0hQyFMdUIRlRp98LTiFO2';
+  const api_key = 'uvM4Ns4WuFp1LoAAzQg94Yhigtr8U4SyR1qtY6eFGpy0s4lsHUWHOgnDNCmY';
   useEffect(()=> {
     if (prompt != '') {
       console.log('img fires');
@@ -139,11 +155,19 @@ const [image, setImage] = useState('');
   return (
     <div>
       <div>L'Artiste Autonomie</div>
-      <button onClick={()=>setPress(!press)}>Press me</button>
+      <div style={{display: 'flex', flexDirection: 'row', border: '1px blue solid'}}>
+        <div onClick={()=>setSelected(CATEGORY.Busines)} className={selected == CATEGORY.Busines ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Busines}</div>
+        <div onClick={()=>setSelected(CATEGORY.Entertainment)} className={selected == CATEGORY.Entertainment ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Entertainment}</div>
+        <div onClick={()=>setSelected(CATEGORY.General)} className={selected == CATEGORY.General ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.General}</div>
+        <div onClick={()=>setSelected(CATEGORY.Health)} className={selected == CATEGORY.Health ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Health}</div>
+        <div onClick={()=>setSelected(CATEGORY.Science)} className={selected == CATEGORY.Science ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Science}</div>
+        <div onClick={()=>setSelected(CATEGORY.Sports)} className={selected == CATEGORY.Sports ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Sports}</div>
+        <div onClick={()=>setSelected(CATEGORY.Technology)} className={selected == CATEGORY.Technology ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Technology}</div>
+      </div>
       <div>{resp}</div>
       <div>{prompt}</div>
-      {image.length > 0 ? <img src={image}></img> : null}
-
+      <img src={image}></img>
+      
     </div>
   );
 }
