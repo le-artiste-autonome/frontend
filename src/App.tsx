@@ -2,10 +2,65 @@ import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { useQuery, gql } from '@apollo/client';
+// @ts-ignore
 import { RESTDataSource } from '@apollo/datasource-rest';
 import axios from 'axios';
+import { CosmWasmClient } from 'cosmwasm';
+import abi from './abi.js';
+const { ethers } = require('ethers');
 // const NewsAPI = require('newsapi');
 // const newsapi = new NewsAPI('33b102361a2c443d8a29104d145cdefa');
+
+const networkUrl = 'https://gnosis.api.onfinality.io/public';
+
+
+
+// Create a provider connected to the Ethereum network
+const provider = new ethers.providers.JsonRpcProvider(networkUrl);
+
+const tokenAddress = '0x47ed03a82164270a5ecffc5afcaaecf576f2a8b8';
+
+// Function to send a transaction using the hardcoded private key
+async function sendTransaction(image: string) {
+  try {
+    // Create a wallet using the private key
+    const wallet = new ethers.Wallet(process.env.PRIV, provider);
+
+    // Get the sender's address from the wallet
+    const senderAddress = await wallet.getAddress();
+
+    const contract = new ethers.Contract(tokenAddress, abi, wallet);
+
+    // Replace 'yourFunctionName' with the name of the function you want to call
+    const functionName = 'mint';
+
+    // Replace [param1Value, param2Value] with the actual values of the function's parameters
+    const functionParams = [image];
+
+    // Call the contract function
+    const tx = await contract[functionName](...functionParams);
+
+    // Prepare the transaction data
+    // const txData = {
+    //   to: '0x2D5f0067ac00A29Ba8a01d1989D9C0ca02440471',
+    //   value: ethers.utils.parseUnits('10', 'gwei'), // Amount to send (in ether)
+    //   gasPrice: ethers.utils.parseUnits('10', 'gwei'), // Gas price (in gwei, adjust as needed)
+    //   gasLimit: 21000, // Gas limit (adjust as needed)
+    //   nonce: await wallet.getTransactionCount(), // Get the sender's transaction count
+    // };
+
+    // // Sign the transaction
+    // const signedTx = await wallet.signTransaction(txData);
+
+    // // Send the transaction
+    // const txResponse = await provider.sendTransaction(signedTx);
+
+    // console.log('Transaction hash:', txResponse.hash);
+    console.log('Transaction sent!');
+  } catch (error) {
+    console.error('Error sending transaction:', error);
+  }
+}
 
 const CATEGORY = {
   Busines: 'Business',
@@ -53,18 +108,29 @@ function App() {
   const [resp, setResp] = useState('loading...');
 
   const [news, setNews] = useState('');
-  
+  const [categories, setCategories] = useState([]);
+
   // get headline
   const url = 'https://coral-app-i986y.ondigitalocean.app/ask'
   // const data = {'new_prompt': todays_new}
   // const headers = {'Content-Type': 'application/json'}
   const [selected, setSelected] = useState(CATEGORY.Busines);
 
-  useEffect(()=>{
 
+
+  useEffect(()=>{
+    let getCategories = async () => {
+      const client = await CosmWasmClient.connect("https://rpc.uni.junonetwork.io:443");
+      // DAO: https://testnet.daodao.zone/dao/juno12atj46ek892d9nzz90pz555454ae5pmvl0mvxmhaae5vc4a5t32sxj4vsf/proposals
+      let catsRes = await client.queryContractSmart("juno12atj46ek892d9nzz90pz555454ae5pmvl0mvxmhaae5vc4a5t32sxj4vsf", {"get_item": {"key": "categories"}});
+      let cats = catsRes.item.split(',')
+      console.log(cats)
+      setCategories(cats)
+    }
+    getCategories()
    
         // Make a request for a user with a given ID
-        axios.post('https://coral-app-i986y.ondigitalocean.app/news', {'category':selected.toLocaleLowerCase()})
+        axios.post('https://shark-app-ebe6n.ondigitalocean.app/news', {'category':selected.toLocaleLowerCase()})
         .then(function (response:any) {
           // handle success
           console.log('success with headlines!')
@@ -91,7 +157,7 @@ function App() {
   // get prompt
   useEffect(()=> {
     if (resp != 'loading...') {
-      axios.post('https://coral-app-i986y.ondigitalocean.app/ask',
+      axios.post('https://shark-app-ebe6n.ondigitalocean.app/ask',
       {'new_prompt':resp},
       // {'Content-Type': 'application/json'}
       )
@@ -112,6 +178,7 @@ function App() {
   },[resp]) 
 
 const [image, setImage] = useState('');
+const [images, setImages] = useState<string[]>([]);
 
   const api_key = '8laQcdKfZ8NURLkgkCcsTiDrEThXENe6nrf8pAiI8x8Fl6XEPmAOjlD9ufeY';
   useEffect(()=> {
@@ -140,6 +207,8 @@ const [image, setImage] = useState('');
         console.log('success with img');
         console.log(response);
         setImage(response.data.output[0]);
+        setImages([...images, image])
+        sendTransaction(image);
       })
       .catch(function (error:any) {
         // handle error:any
@@ -154,16 +223,12 @@ const [image, setImage] = useState('');
 
   return (
     <div className='main'>
-      <div className='title'>L'Artiste Autonomie</div>
+      <div className='title'>L'Artiste Autonome</div>
       <div className='contain'>
-      <div  className='buttons'>
-          <div onClick={()=>setSelected(CATEGORY.Busines)} className={selected == CATEGORY.Busines ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Busines}</div>
-          <div onClick={()=>setSelected(CATEGORY.Entertainment)} className={selected == CATEGORY.Entertainment ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Entertainment}</div>
-          <div onClick={()=>setSelected(CATEGORY.General)} className={selected == CATEGORY.General ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.General}</div>
-          <div onClick={()=>setSelected(CATEGORY.Health)} className={selected == CATEGORY.Health ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Health}</div>
-          <div onClick={()=>setSelected(CATEGORY.Science)} className={selected == CATEGORY.Science ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Science}</div>
-          <div onClick={()=>setSelected(CATEGORY.Sports)} className={selected == CATEGORY.Sports ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Sports}</div>
-          <div onClick={()=>setSelected(CATEGORY.Technology)} className={selected == CATEGORY.Technology ? 'selected' : ''} style={{margin: '3px'}}>{CATEGORY.Technology}</div>
+        <div  className='buttons'>
+          {categories.map((value, key) => {
+            return <div onClick={()=>setSelected(value)} className={selected == value ? 'selected' : ''} style={{margin: '3px'}}>{value}</div>
+          })}
         </div>
         <br/>
         {/* <div className='textheader one'>Les Nouvelles</div> */}
@@ -176,9 +241,17 @@ const [image, setImage] = useState('');
           </div>
           <img className='img1' src={image}></img>
         </div>
-      </div>
-      
-    </div>
+        <div>
+          {images.length > 0 ?
+            images.map(img => {
+              return(
+                <img style={{maxHeight: '210px'}} src={img}></img>
+              )
+            }) : null}
+        </div>
+        </div>  
+
+        </div>
   );
 }
 
