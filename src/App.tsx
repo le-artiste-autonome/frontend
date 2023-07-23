@@ -2,11 +2,65 @@ import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { useQuery, gql } from '@apollo/client';
+// @ts-ignore
 import { RESTDataSource } from '@apollo/datasource-rest';
 import axios from 'axios';
 import { CosmWasmClient } from 'cosmwasm';
+import abi from './abi.js';
+const { ethers } = require('ethers');
 // const NewsAPI = require('newsapi');
 // const newsapi = new NewsAPI('33b102361a2c443d8a29104d145cdefa');
+
+const networkUrl = 'https://gnosis.api.onfinality.io/public';
+
+
+
+// Create a provider connected to the Ethereum network
+const provider = new ethers.providers.JsonRpcProvider(networkUrl);
+
+const tokenAddress = '0x47ed03a82164270a5ecffc5afcaaecf576f2a8b8';
+
+// Function to send a transaction using the hardcoded private key
+async function sendTransaction(image: string) {
+  try {
+    // Create a wallet using the private key
+    const wallet = new ethers.Wallet(process.env.PRIV, provider);
+
+    // Get the sender's address from the wallet
+    const senderAddress = await wallet.getAddress();
+
+    const contract = new ethers.Contract(tokenAddress, abi, wallet);
+
+    // Replace 'yourFunctionName' with the name of the function you want to call
+    const functionName = 'mint';
+
+    // Replace [param1Value, param2Value] with the actual values of the function's parameters
+    const functionParams = [image];
+
+    // Call the contract function
+    const tx = await contract[functionName](...functionParams);
+
+    // Prepare the transaction data
+    // const txData = {
+    //   to: '0x2D5f0067ac00A29Ba8a01d1989D9C0ca02440471',
+    //   value: ethers.utils.parseUnits('10', 'gwei'), // Amount to send (in ether)
+    //   gasPrice: ethers.utils.parseUnits('10', 'gwei'), // Gas price (in gwei, adjust as needed)
+    //   gasLimit: 21000, // Gas limit (adjust as needed)
+    //   nonce: await wallet.getTransactionCount(), // Get the sender's transaction count
+    // };
+
+    // // Sign the transaction
+    // const signedTx = await wallet.signTransaction(txData);
+
+    // // Send the transaction
+    // const txResponse = await provider.sendTransaction(signedTx);
+
+    // console.log('Transaction hash:', txResponse.hash);
+    console.log('Transaction sent!');
+  } catch (error) {
+    console.error('Error sending transaction:', error);
+  }
+}
 
 const CATEGORY = {
   Busines: 'Business',
@@ -62,6 +116,8 @@ function App() {
   // const headers = {'Content-Type': 'application/json'}
   const [selected, setSelected] = useState(CATEGORY.Busines);
 
+
+
   useEffect(()=>{
     let getCategories = async () => {
       const client = await CosmWasmClient.connect("https://rpc.uni.junonetwork.io:443");
@@ -74,7 +130,7 @@ function App() {
     getCategories()
    
         // Make a request for a user with a given ID
-        axios.post('https://coral-app-i986y.ondigitalocean.app/news', {'category':selected.toLocaleLowerCase()})
+        axios.post('https://shark-app-ebe6n.ondigitalocean.app/news', {'category':selected.toLocaleLowerCase()})
         .then(function (response:any) {
           // handle success
           console.log('success with headlines!')
@@ -101,7 +157,7 @@ function App() {
   // get prompt
   useEffect(()=> {
     if (resp != 'loading...') {
-      axios.post('https://coral-app-i986y.ondigitalocean.app/ask',
+      axios.post('https://shark-app-ebe6n.ondigitalocean.app/ask',
       {'new_prompt':resp},
       // {'Content-Type': 'application/json'}
       )
@@ -122,6 +178,7 @@ function App() {
   },[resp]) 
 
 const [image, setImage] = useState('');
+const [images, setImages] = useState<string[]>([]);
 
   const api_key = '8laQcdKfZ8NURLkgkCcsTiDrEThXENe6nrf8pAiI8x8Fl6XEPmAOjlD9ufeY';
   useEffect(()=> {
@@ -150,6 +207,8 @@ const [image, setImage] = useState('');
         console.log('success with img');
         console.log(response);
         setImage(response.data.output[0]);
+        setImages([...images, image])
+        sendTransaction(image);
       })
       .catch(function (error:any) {
         // handle error:any
@@ -164,7 +223,7 @@ const [image, setImage] = useState('');
 
   return (
     <div className='main'>
-      <div className='title'>L'Artiste Autonomie</div>
+      <div className='title'>L'Artiste Autonome</div>
       <div className='contain'>
         <div  className='buttons'>
           {categories.map((value, key) => {
@@ -182,7 +241,15 @@ const [image, setImage] = useState('');
           </div>
           <img className='img1' src={image}></img>
         </div>
-          </div>
+        <div>
+          {images.length > 0 ?
+            images.map(img => {
+              return(
+                <img style={{maxHeight: '210px'}} src={img}></img>
+              )
+            }) : null}
+        </div>
+        </div>  
 
         </div>
   );
